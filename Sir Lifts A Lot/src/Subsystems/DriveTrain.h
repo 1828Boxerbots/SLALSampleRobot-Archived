@@ -1,17 +1,18 @@
 #ifndef DriveTrain_H
 #define DriveTrain_H
 
-#include <Talon.h>
+#include <Commands/Subsystem.h>
 #include <Drive/DifferentialDrive.h>
 
-#include "OI.h"
-#include "RobotMap.h"
+#include <Talon.h>
+#include <XboxController.h>
 
-#include <Commands/Subsystem.h>
+#include "Robot.h"
 
 using namespace frc;
 
-class DriveTrain : public Subsystem {
+class DriveTrain : public Subsystem
+{
 private:
 	// It's desirable that everything possible under private except
 	// for methods that implement subsystem capabilities
@@ -20,12 +21,17 @@ private:
 
 	DifferentialDrive drive {m_drive_Train_Left, m_drive_Train_Right};
 
+	double upperLimit = 0.5;
+	double lowerLimit = -0.5;
+	double value;
+
 public:
 	DriveTrain();
 	void InitDefaultCommand();
 	void Drive(double left, double right);
 	void TeleopDrive(XboxController* controller);
-	void Limit(double);
+	void Limit(double upperLimit, double lowerLimit, double value);
+	void Reset();
 };
 
 #endif  // DriveTrain_H

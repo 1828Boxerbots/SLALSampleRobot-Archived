@@ -5,21 +5,28 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
+#include "Commands/ExampleCommand.h"
+#include "Commands/MyAutoCommand.h"
+
+#include <iostream>
+#include <Subsystems/DriveTrain.h>
+#include <Commands/Subsystem.h>
 #include <Commands/Command.h>
 #include <Commands/Scheduler.h>
 #include <LiveWindow/LiveWindow.h>
 #include <SmartDashboard/SendableChooser.h>
 #include <SmartDashboard/SmartDashboard.h>
-#include <TimedRobot.h>
 
-#include "Commands/ExampleCommand.h"
-#include "Commands/MyAutoCommand.h"
+#include "Robot.h"
+
+#include <iostream>
 
 using namespace frc;
 
-class Robot : public frc::TimedRobot {
-public:
-	void RobotInit() override {
+shared_ptr<DriveTrain> Robot::drivetrain = make_shared<DriveTrain>();
+
+	void RobotInit() override
+	{
 		m_chooser.AddDefault("Default Auto", &m_defaultAuto);
 		m_chooser.AddObject("My Auto", &m_myAuto);
 		frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
@@ -34,7 +41,8 @@ public:
 	 */
 	void DisabledInit() override {}
 
-	void DisabledPeriodic() override {
+	void DisabledPeriodic() override
+	{
 		frc::Scheduler::GetInstance()->Run();
 	}
 
@@ -52,32 +60,39 @@ public:
 	 * comparisons
 	 * to the if-else structure below with additional strings & commands.
 	 */
-	void AutonomousInit() override {
+	void AutonomousInit() override
+	{
 		std::string autoSelected = frc::SmartDashboard::GetString(
 				"Auto Selector", "Default");
-		if (autoSelected == "My Auto") {
+		if (autoSelected == "My Auto")
+		{
 			m_autonomousCommand = &m_myAuto;
-		} else {
+		} else
+		{
 			m_autonomousCommand = &m_defaultAuto;
 		}
 
 		m_autonomousCommand = m_chooser.GetSelected();
 
-		if (m_autonomousCommand != nullptr) {
+		if (m_autonomousCommand != nullptr)
+		{
 			m_autonomousCommand->Start();
 		}
 	}
 
-	void AutonomousPeriodic() override {
+	void AutonomousPeriodic() override
+	{
 		frc::Scheduler::GetInstance()->Run();
 	}
 
-	void TeleopInit() override {
+	void TeleopInit() override
+	{
 		// This makes sure that the autonomous stops running when
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
-		if (m_autonomousCommand != nullptr) {
+		if (m_autonomousCommand != nullptr)
+		{
 			m_autonomousCommand->Cancel();
 			m_autonomousCommand = nullptr;
 		}
@@ -87,7 +102,7 @@ public:
 
 	void TestPeriodic() override {}
 
-private:
+
 	// Have it null by default so that if testing teleop it
 	// doesn't have undefined behavior and potentially crash.
 	frc::Command* m_autonomousCommand = nullptr;

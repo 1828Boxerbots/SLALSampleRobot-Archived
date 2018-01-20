@@ -7,9 +7,10 @@
 
 #include "OI.h"
 
-#include <WPILib.h>
+using namespace frc;
 
-OI::OI() {
+OI::OI()
+{
 	// Process operator interface input here.
 
 }

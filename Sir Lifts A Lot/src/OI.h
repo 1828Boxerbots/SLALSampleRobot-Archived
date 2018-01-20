@@ -9,11 +9,12 @@
 
 #include <XboxController.h>
 
-#include "RobotMap.h"
+#include "Robot.h"
 
 using namespace frc;
 
-class OI {
+class OI
+{
 public:
 	OI();
 	XboxController controller {XBOX_CONTROLLER_PORT};
