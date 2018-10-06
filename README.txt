@@ -22,3 +22,5 @@ subsystems
 		
 		Comands:
 			Move
+
+			This is a test of the Presidential Alert System
