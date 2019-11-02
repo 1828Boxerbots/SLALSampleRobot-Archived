@@ -52,10 +52,11 @@ void Robot::OperatorControl()
 {
   while (IsOperatorControl() && IsEnabled()) 
   {
-    double leftY = -m_xbox.GetY(GenericHID::kLeftHand);
-    double leftX = -m_xbox.GetX(GenericHID::kLeftHand);
+    double leftY = m_xbox.GetY(GenericHID::kLeftHand);
+    double rightY = m_xbox.GetY(GenericHID::kRightHand);
     // Drive with arcade style (use right stick)
-  m_robotDrive.ArcadeDrive(leftX, leftY);
+    m_leftMotor.Set(leftY);
+    m_rightMotor.Set(rightY);
 
 
     //LeadScrew

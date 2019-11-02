@@ -42,8 +42,8 @@ class Robot : public frc::SampleRobot
 
  private:
   // Robot drive system
-  Talon m_leftMotor{1};
-  Talon m_rightMotor{0};
+  Talon m_rightMotor{1};
+  Talon m_leftMotor{0};
   DifferentialDrive m_robotDrive{m_leftMotor, m_rightMotor};
 
   XboxController m_xbox{0};
