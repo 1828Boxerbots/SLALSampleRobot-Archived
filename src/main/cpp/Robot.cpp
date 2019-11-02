@@ -55,8 +55,8 @@ void Robot::OperatorControl()
     double leftY = m_xbox.GetY(GenericHID::kLeftHand);
     double rightY = m_xbox.GetY(GenericHID::kRightHand);
     // Drive with arcade style (use right stick)
-    m_leftMotor.Set(leftY);
-    m_rightMotor.Set(rightY);
+    m_leftMotor.Set(0.6*leftY);
+    m_rightMotor.Set(0.6*rightY);
 
 
     //LeadScrew
