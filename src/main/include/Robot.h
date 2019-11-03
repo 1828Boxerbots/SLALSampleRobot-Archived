@@ -8,7 +8,6 @@
 #pragma once
 
 #include <string>
-
 #include <frc/XboxController.h>
 #include <frc/Talon.h>
 #include <frc/SampleRobot.h>
@@ -17,6 +16,7 @@
 #include <frc/DigitalInput.h>
 #include <frc/AnalogInput.h>
 #include <frc/interfaces/Potentiometer.h>
+#include "RobotMap.h"
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class. The
@@ -41,20 +41,29 @@ class Robot : public frc::SampleRobot
   void Test() override;
 
  private:
-  // Robot drive system
-  Talon m_rightMotor{1};
-  Talon m_leftMotor{0};
-  //DifferentialDrive m_robotDrive{m_leftMotor, m_rightMotor};
+  //Drivetrain
+  Talon m_leftMotor{PWM_LEFT_DRIVE};
+  Talon m_rightMotor{PWM_RIGHT_DRIVE};
 
-  XboxController m_xbox{0};
+  //Xbox Controller
+  XboxController m_xbox{USB_CONTROLLER};
 
-  Talon m_leftLeadScrew{2};
-  Talon m_rightLeadScrew{3};
+  //Lead Screws
+  Talon m_leftLeadScrew{PWM_LEFT_SCREW};
+  Talon m_rightLeadScrew{PWM_RIGHT_SCREW};
 
-  Talon m_arm{4};
+  //Arm
+  Talon m_arm{PWM_ARM_MOTOR};
 
-  DigitalInput m_topLimit{7};
-  DigitalInput m_bottomLimit{6};
+  //Limit Switches
+  DigitalInput m_topLimit{DIO_TOP_LIMIT};
+  DigitalInput m_bottomLimit{DIO_BOTTOM_LIMIT};
 
-  AnalogInput m_armPot{3};
+  //Potentiometer
+  AnalogInput m_armPot{ANALOG_POT};
+
+  //Compact Functions
+  void Drive();
+  void LeadScrew();
+  void Arms();
 };

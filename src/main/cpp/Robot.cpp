@@ -45,123 +45,135 @@ void Robot::Autonomous()
   
 }
 
+void Robot::Drive()
+{
+  double leftY = m_xbox.GetY(GenericHID::kLeftHand);
+  double rightY = m_xbox.GetY(GenericHID::kRightHand);
+  // Tank Drive
+  m_leftMotor.Set(0.5*leftY);
+  m_rightMotor.Set(0.5*rightY);
+}
+
+void Robot::LeadScrew()
+{
+  bool topLimit = m_topLimit.Get();
+  bool bottomLimit = m_bottomLimit.Get();
+  SmartDashboard::PutBoolean("TopLimit", topLimit);
+  SmartDashboard::PutBoolean("BottomLimit", bottomLimit);
+
+  bool rightBumper = m_xbox.GetBumper(GenericHID::kRightHand);
+  bool leftBumper = m_xbox.GetBumper(GenericHID::kLeftHand);
+
+  if (((topLimit  == true) && (bottomLimit == true)) || ((topLimit == false) && (bottomLimit == false)))
+  {
+    if (((rightBumper  == true) && (leftBumper == true)) || ((rightBumper == false) && (leftBumper == false)))
+    {
+        m_leftLeadScrew.Set(0);
+      m_rightLeadScrew.Set(0);
+    }
+    else
+    {
+      if (leftBumper == true)
+      {
+        m_leftLeadScrew.Set(-0.75);
+        m_rightLeadScrew.Set(-0.75);
+      }
+      if (rightBumper == true)
+      {
+        m_leftLeadScrew.Set(.75);
+        m_rightLeadScrew.Set(.75);
+      }
+    }
+  }
+  else
+  {
+    if (topLimit == true)
+    {
+      if (leftBumper == true)
+      {
+        m_leftLeadScrew.Set(-0.75);
+        m_rightLeadScrew.Set(-0.75);
+      }
+      else
+      {
+        m_leftLeadScrew.Set(0);
+        m_rightLeadScrew.Set(0);
+      }
+    }
+    if (bottomLimit == true)
+    {
+      if (rightBumper == true)
+      {
+        m_leftLeadScrew.Set(.75);
+        m_rightLeadScrew.Set(.75);
+      }
+      else
+      {
+        m_leftLeadScrew.Set(0);
+        m_rightLeadScrew.Set(0);
+      }
+    }
+  }
+}
+
+void Robot::Arms()
+{
+  bool xButton = m_xbox.GetXButton();
+  bool bButton = m_xbox.GetBButton();
+  int potValue = m_armPot.GetValue();
+  double potVoltage = m_armPot.GetVoltage();
+
+  const double MAXVALUE = 1776;
+  const double MINVALUE = 88;
+  SmartDashboard::PutNumber("Arm Pot Value", potValue);
+  SmartDashboard::PutNumber("Arm Pot Voltage", potVoltage);
+  if (((xButton  == true) && (bButton == true)) || ((xButton == false) && (bButton == false)))
+    {
+      m_arm.Set(0);
+    }
+    else
+    {
+      if (xButton == true)
+      {
+        //This is closing the claw
+        if (potValue > MAXVALUE) 
+        {
+          m_arm.Set(0.0);
+        }
+        else 
+        {
+          m_arm.Set(0.5);
+        }
+        
+      }
+      if (bButton == true)
+      {
+        //This is opening the claw
+        if (potValue < MINVALUE) 
+        {
+          m_arm.Set(0.0);
+        }
+        else 
+        {
+          m_arm.Set(-0.5);
+        }
+      }
+    }
+}
+
 /**
- * Runs the motors with arcade steering.
+ * Runs the motors with tank steering.
  */
 void Robot::OperatorControl() 
 {
   while (IsOperatorControl() && IsEnabled()) 
   {
-    double leftY = m_xbox.GetY(GenericHID::kLeftHand);
-    double rightY = m_xbox.GetY(GenericHID::kRightHand);
-    // Drive with arcade style (use right stick)
-    m_leftMotor.Set(0.5*leftY);
-    m_rightMotor.Set(0.5*rightY);
-
-
+    //Drive
+    Drive();
     //LeadScrew
-    bool topLimit = m_topLimit.Get();
-    bool bottomLimit = m_bottomLimit.Get();
-    SmartDashboard::PutBoolean("TopLimit", topLimit);
-    SmartDashboard::PutBoolean("BottomLimit", bottomLimit);
-
-    bool rightBumper = m_xbox.GetBumper(GenericHID::kRightHand);
-    bool leftBumper = m_xbox.GetBumper(GenericHID::kLeftHand);
-
-    if (((topLimit  == true) && (bottomLimit == true)) || ((topLimit == false) && (bottomLimit == false)))
-    {
-      if (((rightBumper  == true) && (leftBumper == true)) || ((rightBumper == false) && (leftBumper == false)))
-      {
-         m_leftLeadScrew.Set(0);
-        m_rightLeadScrew.Set(0);
-      }
-      else
-      {
-        if (leftBumper == true)
-        {
-          m_leftLeadScrew.Set(-0.75);
-          m_rightLeadScrew.Set(-0.75);
-        }
-        if (rightBumper == true)
-        {
-          m_leftLeadScrew.Set(.75);
-          m_rightLeadScrew.Set(.75);
-        }
-      }
-    }
-    else
-    {
-      if (topLimit == true)
-      {
-        if (leftBumper == true)
-        {
-          m_leftLeadScrew.Set(-0.75);
-          m_rightLeadScrew.Set(-0.75);
-        }
-        else
-        {
-          m_leftLeadScrew.Set(0);
-          m_rightLeadScrew.Set(0);
-        }
-      }
-      if (bottomLimit == true)
-      {
-        if (rightBumper == true)
-        {
-          m_leftLeadScrew.Set(.75);
-          m_rightLeadScrew.Set(.75);
-        }
-        else
-        {
-          m_leftLeadScrew.Set(0);
-          m_rightLeadScrew.Set(0);
-        }
-      }
-    }
-
+    LeadScrew();
     //Arm
-    bool xButton = m_xbox.GetXButton();
-    bool bButton = m_xbox.GetBButton();
-    int potValue = m_armPot.GetValue();
-    double potVoltage = m_armPot.GetVoltage();
-
-    const double MAXVALUE = 1776;
-    const double MINVALUE = 88;
-    SmartDashboard::PutNumber("Arm Pot Value", potValue);
-    SmartDashboard::PutNumber("Arm Pot Voltage", potVoltage);
-    if (((xButton  == true) && (bButton == true)) || ((xButton == false) && (bButton == false)))
-      {
-        m_arm.Set(0);
-      }
-      else
-      {
-        if (xButton == true)
-        {
-          //This is closing the claw
-          if (potValue > MAXVALUE) 
-          {
-            m_arm.Set(0.0);
-          }
-          else 
-          {
-            m_arm.Set(0.5);
-          }
-          
-        }
-        if (bButton == true)
-        {
-          //This is opening the claw
-          if (potValue < MINVALUE) 
-          {
-            m_arm.Set(0.0);
-          }
-          else 
-          {
-            m_arm.Set(-0.5);
-          }
-        }
-      }
-
+    Arms();
     // The motors will be updated every 5ms
     frc::Wait(0.005);
   }
